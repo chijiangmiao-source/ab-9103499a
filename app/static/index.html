@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>高空探测器 · 标定包发布控制台</title>
+<style>
+  :root { --bg:#0b1220; --panel:#121b2e; --line:#24304a; --ink:#e6edf7;
+          --muted:#8fa0bd; --ok:#2fbf71; --warn:#e8a13a; --bad:#e5484d; --accent:#4c8dff; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font:14px/1.6 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif; }
+  header { padding:20px 28px; border-bottom:1px solid var(--line);
+           display:flex; justify-content:space-between; align-items:center; }
+  header h1 { font-size:18px; margin:0; }
+  header .active { color:var(--muted); font-size:13px; }
+  header .active code { color:var(--accent); }
+  main { max-width:980px; margin:24px auto; padding:0 20px; display:grid; gap:20px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:20px; }
+  h2 { margin:0 0 14px; font-size:15px; }
+  label { display:block; margin:10px 0 4px; color:var(--muted); }
+  input[type=text], textarea {
+    width:100%; background:#0d1526; color:var(--ink); border:1px solid var(--line);
+    border-radius:8px; padding:10px 12px; font:13px ui-monospace,Menlo,Consolas,monospace; }
+  textarea { min-height:120px; resize:vertical; }
+  .row { display:flex; gap:12px; align-items:center; margin-top:14px; flex-wrap:wrap; }
+  button { background:var(--accent); color:#fff; border:0; border-radius:8px;
+           padding:10px 18px; font-size:14px; cursor:pointer; }
+  button.secondary { background:#223050; }
+  button:disabled { opacity:.5; cursor:not-allowed; }
+  .hint { color:var(--muted); font-size:12px; }
+  .alert { border-radius:8px; padding:10px 14px; margin-top:14px; white-space:pre-wrap;
+           font-size:13px; display:none; }
+  .alert.ok { display:block; background:rgba(47,191,113,.12); border:1px solid var(--ok); }
+  .alert.bad { display:block; background:rgba(229,72,77,.12); border:1px solid var(--bad); }
+  .alert.warn { display:block; background:rgba(232,161,58,.12); border:1px solid var(--warn); }
+  table { width:100%; border-collapse:collapse; font-size:13px; margin-top:8px; }
+  th,td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--line);
+          vertical-align:top; }
+  th { color:var(--muted); font-weight:500; }
+  .pill { display:inline-block; padding:2px 10px; border-radius:999px; font-size:12px; }
+  .pill.COMPLETED { background:rgba(47,191,113,.18); color:var(--ok); }
+  .pill.REJECTED  { background:rgba(229,72,77,.18); color:var(--bad); }
+  .pill.PREPARED,.pill.RECEIVED,.pill.ACTIVATING { background:rgba(232,161,58,.18); color:var(--warn); }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12px; word-break:break-all; }
+  details { margin-top:8px; }
+  summary { cursor:pointer; color:var(--muted); }
+  pre { background:#0d1526; border:1px solid var(--line); border-radius:8px;
+        padding:10px; overflow:auto; font-size:12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🛰️ 高空探测器 · 标定包发布控制台</h1>
+  <div class="active">当前活动摘要：<code id="active-digest">（尚无成功发布）</code></div>
+</header>
+<main>
+  <section class="card">
+    <h2>提交标定包候选</h2>
+    <label for="rid">发布标识</label>
+    <input id="rid" type="text" placeholder="例如 calib-2026-10-04" maxlength="128" />
+    <label for="art">Base64 工件（解码后不超过 64 KiB）</label>
+    <textarea id="art" placeholder="粘贴标定包的 Base64 内容…"></textarea>
+    <div class="row">
+      <button id="submit-btn">发布到两座离线镜像仓</button>
+      <button id="query-btn" class="secondary">按标识查看进度</button>
+      <span class="hint">同一标识 + 同一工件重放首次回执；同标识不同工件将被明确拒绝。</span>
+    </div>
+    <div id="form-alert" class="alert"></div>
+  </section>
+
+  <section class="card">
+    <h2>发布状态</h2>
+    <table>
+      <tr><th style="width:120px">发布标识</th><td id="v-id">—</td></tr>
+      <tr><th>状态</th><td id="v-state">—</td></tr>
+      <tr><th>当前摘要</th><td id="v-digest" class="mono">—</td></tr>
+      <tr><th>进度</th><td id="v-progress">—</td></tr>
+      <tr><th>准备证据</th><td id="v-prepare" class="mono">—</td></tr>
+      <tr><th>激活证据</th><td id="v-active" class="mono">—</td></tr>
+      <tr><th>错误 / 拒绝原因</th><td id="v-error">—</td></tr>
+    </table>
+    <details>
+      <summary>查看原始证据 JSON</summary>
+      <pre id="v-raw">—</pre>
+    </details>
+  </section>
+</main>
+<script src="/app.js"></script>
+</body>
+</html>
